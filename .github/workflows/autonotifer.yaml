@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
           recipients: |
-            crowdin=@jenkins-infra/crowdin-admins
+            crowdin=@mylittlecorp/crowdin-admins
             helpdesk=@lemeurherve
-            test=@jenkins-infra/test-team
-            another-test=@jenkins-infra/test-team
+            test=@mylittlecorp/test-team
+            another-test=@mylittlecorp/test-team
