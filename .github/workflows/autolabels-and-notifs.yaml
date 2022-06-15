@@ -1,0 +1,23 @@
+name: Autolabeler
+on:
+  issues:
+    types: [opened, edited]
+jobs:
+  autolabeler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: stefanbuck/github-issue-parser@v2
+        id: issue-parser
+        with:
+          template-path: .github/ISSUE_TEMPLATE/1-report-issue.yml
+      - run: echo "ISSUE_LABELS=$(echo '${{ fromJSON(steps.issue-parser.outputs.jsonString)?.services }}' | tr '[:upper:]' '[:lower:]' | sed 's/"//g' | sed 's/ //g')" >> $GITHUB_ENV
+      - uses: andymckay/labeler@master
+        with:
+          add-labels: ${{ env.ISSUE_LABELS }}
+          remove-labels: "other"
+      - uses: jenschelkopf/issue-label-notification-action@1.3
+        with:
+          recipients: |
+            crowdin=@crowdin-admins
+            helpdesk=@lemeurherve
