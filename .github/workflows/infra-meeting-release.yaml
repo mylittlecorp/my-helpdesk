@@ -30,13 +30,13 @@ jobs:
           echo "::set-output name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')"
         id: version
 
-      - name: Create Release
-        id: create_release
+      #- name: Create Release
+       # id: create_release
         # uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.token }}
-        with:
-          tag_name: ${{ steps.version.outputs.TAG_NAME }}
+        ##env:
+         # GITHUB_TOKEN: ${{ secrets.token }}
+        #with:
+         # tag_name: ${{ steps.version.outputs.TAG_NAME }}
 
 
       - name: Run script file
