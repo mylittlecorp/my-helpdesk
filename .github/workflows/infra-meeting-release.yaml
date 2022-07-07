@@ -66,7 +66,10 @@ jobs:
       #   with:
       #     app_id: ${{ secrets.INFRA_GITHUB_APP_ID }}
       #     private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
-
+      - name: View context attributes
+        uses: actions/github-script@v6
+        with:
+          script: console.log(context)
       - name: "Create release"
         uses: "actions/github-script@v6"
         with:
