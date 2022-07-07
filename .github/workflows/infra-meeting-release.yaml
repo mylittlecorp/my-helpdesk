@@ -39,7 +39,7 @@ on:
 jobs:
   print-tag:
     runs-on: ubuntu-latest
-    if:  ${{ inputs.print_tags }} 
+    # if:  ${{ inputs.print_tags }} 
     steps:
       - name: Print the input tag to STDOUT
         run: echo  The tags are ${{ inputs.tags }}
@@ -61,7 +61,7 @@ jobs:
       - name: "Create release"
         uses: "actions/github-script@v5"
         with:
-          github-token: ${{ steps.generate_token.outputs.token }}
+          github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
             try {
               await github.rest.repos.createRelease({
