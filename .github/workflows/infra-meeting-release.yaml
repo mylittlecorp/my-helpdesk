@@ -40,18 +40,19 @@ jobs:
 
 
       - name: Run script file
-        run: |
-          echo "TEST1"
-          echo ${GITHUB_WORKSPACE}
-          echo "TEST2"
-          echo $GH_CURRENT_MILESTONE_ID
-          echo "END TEST"
-          ls -R ${PWD}
-          echo "END TEST"
-          ls -R ${GITHUB_WORKSPACE}
-          chmod +x "${PWD}/.github/workflows/milestone2md.sh"
-          echo "RELEASE_BODY=$(${PWD}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
-        shell: bash
+        run: ./milestone2md.sh
+        #run: |
+        #  echo "TEST1"
+        #  echo ${GITHUB_WORKSPACE}
+        #  echo "TEST2"
+        #  echo $GH_CURRENT_MILESTONE_ID
+        #  echo "END TEST"
+        #  ls -R ${PWD}
+        #  echo "END TEST"
+        #  ls -R ${GITHUB_WORKSPACE}
+        #  chmod +x "${PWD}/.github/workflows/milestone2md.sh"
+        #  echo "RELEASE_BODY=$(${PWD}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
+        #shell: bash
         id: shell_script
         env:
           GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
