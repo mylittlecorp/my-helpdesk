@@ -59,7 +59,7 @@ jobs:
           private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
 
       - name: "Create release"
-        uses: "actions/github-script@v5"
+        uses: "actions/github-script@v6"
         with:
           # github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
