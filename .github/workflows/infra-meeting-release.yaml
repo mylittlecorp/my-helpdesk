@@ -39,8 +39,8 @@ jobs:
          # tag_name: ${{ steps.version.outputs.TAG_NAME }}
 
 
-      - name: Run script file
-        run: .github/workflows/milestone2md.sh
+      # - name: Run script file
+      #   run: .github/workflows/milestone2md.sh
         #run: |
         #  echo "TEST1"
         #  echo ${GITHUB_WORKSPACE}
@@ -58,14 +58,14 @@ jobs:
         #   GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
 
 
-      - name: "Determine tag"
-        run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
-      - name: Generate token
-        id: generate_token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.INFRA_GITHUB_APP_ID }}
-          private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
+      # - name: "Determine tag"
+      #   run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
+      # - name: Generate token
+      #   id: generate_token
+      #   uses: tibdex/github-app-token@v1
+      #   with:
+      #     app_id: ${{ secrets.INFRA_GITHUB_APP_ID }}
+      #     private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
 
       - name: "Create release"
         uses: "actions/github-script@v6"
@@ -78,6 +78,7 @@ jobs:
             console.log('milestone_id:' + inputs.milestone_id)
 
             console.log(JSON.stringify(context.issue))
+            /*
             try {
               await github.rest.repos.createRelease({
                 draft: true,
@@ -92,3 +93,4 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
+            */
