@@ -61,7 +61,7 @@ jobs:
       - name: "Create release"
         uses: "actions/github-script@v5"
         with:
-          github-token: "${{ steps.generate_token.outputs.token }}"
+          # github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
             console.log(JSON.stringify(context.issue))
             try {
