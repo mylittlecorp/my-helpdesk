@@ -7,7 +7,7 @@ on:
       milestone_id:
         description: 'Milestone id to prepare for release'
         required: true
-        default: 'warning' 
+        default: '1' 
         type: string
       milestone_name:
         description: 'Milestone name'
@@ -63,6 +63,8 @@ jobs:
         with:
           github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
+            console.log(JSON.stringify(context.issue))
+            console.log(JSON.stringify(github-token))
             try {
               await github.rest.repos.createRelease({
                 draft: true,
