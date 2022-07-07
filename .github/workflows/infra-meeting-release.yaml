@@ -40,7 +40,7 @@ jobs:
 
 
       - name: Run script file
-        run: ./milestone2md.sh
+        run: .github/workflows/milestone2md.sh
         #run: |
         #  echo "TEST1"
         #  echo ${GITHUB_WORKSPACE}
@@ -52,7 +52,7 @@ jobs:
         #  ls -R ${GITHUB_WORKSPACE}
         #  chmod +x "${PWD}/.github/workflows/milestone2md.sh"
         #  echo "RELEASE_BODY=$(${PWD}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
-        #shell: bash
+        shell: bash
         id: shell_script
         env:
           GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
