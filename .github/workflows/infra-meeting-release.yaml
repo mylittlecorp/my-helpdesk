@@ -76,9 +76,9 @@ jobs:
           # github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
             console.log('start')
-            console.log(JSON.stringify(inputs))
+            console.log(JSON.stringify(context.inputs))
             console.log('next')
-            console.log('milestone_id:' + inputs.milestone_id)
+            console.log('milestone_id:' + context.inputs.milestone_id)
 
             console.log(JSON.stringify(context.issue))
             /*
