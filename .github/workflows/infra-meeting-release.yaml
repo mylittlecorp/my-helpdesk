@@ -46,8 +46,8 @@ jobs:
           echo "TEST2"
           echo $GH_CURRENT_MILESTONE_ID
           echo "END TEST"
-          chmod +x .github/workflows/milestone2md.sh
-          echo "RELEASE_BODY=$(.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
+          chmod +x "${GITHUB_WORKSPACE}/.github/workflows/milestone2md.sh"
+          echo "RELEASE_BODY=$(${GITHUB_WORKSPACE}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
         shell: bash
         id: shell_script
         env:
