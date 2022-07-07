@@ -68,7 +68,7 @@ jobs:
             try {
               await github.rest.repos.createRelease({
                 draft: true,
-                # generate_release_notes: true,
+                // generate_release_notes: true,
                 name: process.env.RELEASE_TAG,
                 owner: context.repo.owner,
                 prerelease: false,
