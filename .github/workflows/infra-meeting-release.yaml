@@ -23,13 +23,33 @@ jobs:
     name: "Prepare infra meeting notes release"
     runs-on: "ubuntu-latest"
     steps:
-    
+
+
+      - name: Retrieve version
+        run: |
+          echo "::set-output name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')"
+        id: version
+
+      - name: Create Release
+        id: create_release
+        # uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
+        with:
+          tag_name: ${{ steps.version.outputs.TAG_NAME }}
+
+
       - name: Run script file
         run: |
-          chmod +x ./.github/workflows/milestone2md.sh
-          echo "RELEASE_BODY=$(./.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
-          echo "TEST"
+          chmod +x .github/workflows/milestone2md.sh
+          echo "RELEASE_BODY=$(.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
+          echo "TEST3
+          echo $GH_CURRENT_MILESTONE_ID
+          echo "END TEST"
         shell: bash
+        id: shell_script
+        env:
+          GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
 
 
       - name: "Determine tag"
@@ -56,6 +76,7 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.RELEASE_TAG,
+                body: process.env.RELEASE_BODY,
               });
             } catch (error) {
               core.setFailed(error.message);
