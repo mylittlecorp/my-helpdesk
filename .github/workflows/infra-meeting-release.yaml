@@ -1,0 +1,78 @@
+name: "Prepare infra meeting notes release"
+
+# https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+on:
+  workflow_dispatch:
+    inputs:
+      milestone_id:
+        description: 'Milestone id to prepare for release'
+        required: true
+        default: 'warning' 
+        type: string
+      milestone_name:
+        description: 'Milestone name'
+        required: true
+        default: 'current' 
+        type: string
+      # logLevel:
+      #   description: 'Log level'
+      #   required: true
+      #   default: 'warning' 
+      #   type: choice
+      #   options:
+      #   - info
+      #   - warning
+      #   - debug 
+      # print_tags:
+      #   description: 'True to print to STDOUT'
+      #   required: true 
+      #   type: boolean 
+      # tags:
+      #   description: 'Test scenario tags'
+      #   required: true 
+      #   type: string
+      # environment:
+      #   description: 'Environment to run tests against'
+      #   type: environment
+      #   required: true
+
+jobs:
+  print-tag:
+    runs-on: ubuntu-latest
+    if:  ${{ inputs.print_tags }} 
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ inputs.tags }}
+
+  # https://localheinz.com/blog/2022/01/24/creating-releases-with-github-actions/
+  release:
+    name: "Prepare infra meeting notes release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Determine tag"
+        run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.INFRA_GITHUB_APP_ID }}
+          private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
+
+      - name: "Create release"
+        uses: "actions/github-script@v5"
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            try {
+              await github.rest.repos.createRelease({
+                draft: true,
+                # generate_release_notes: true,
+                name: process.env.RELEASE_TAG,
+                owner: context.repo.owner,
+                prerelease: false,
+                repo: context.repo.repo,
+                tag_name: process.env.RELEASE_TAG,
+              });
+            } catch (error) {
+              core.setFailed(error.message);
+            }
