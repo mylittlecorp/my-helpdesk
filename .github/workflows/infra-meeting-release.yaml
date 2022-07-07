@@ -64,11 +64,10 @@ jobs:
           github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
             console.log(JSON.stringify(context.issue))
-            console.log(JSON.stringify(github-token))
             try {
               await github.rest.repos.createRelease({
                 draft: true,
-                // generate_release_notes: true,
+                generate_release_notes: true,
                 name: process.env.RELEASE_TAG,
                 owner: context.repo.owner,
                 prerelease: false,
