@@ -25,10 +25,10 @@ jobs:
     steps:
 
 
-      - name: Retrieve version
-        run: |
-          echo "::set-output name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')"
-        id: version
+      # - name: Retrieve version
+      #   run: |
+      #     echo "::set-output name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')"
+      #   id: version
 
       #- name: Create Release
        # id: create_release
@@ -52,10 +52,10 @@ jobs:
         #  ls -R ${GITHUB_WORKSPACE}
         #  chmod +x "${PWD}/.github/workflows/milestone2md.sh"
         #  echo "RELEASE_BODY=$(${PWD}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
-        shell: bash
-        id: shell_script
-        env:
-          GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
+        # shell: bash
+        # id: shell_script
+        # env:
+        #   GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
 
 
       - name: "Determine tag"
@@ -72,6 +72,11 @@ jobs:
         with:
           # github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
+            console.log('start')
+            console.log(JSON.stringify(inputs))
+            console.log('next')
+            console.log('milestone_id:' + inputs.milestone_id)
+
             console.log(JSON.stringify(context.issue))
             try {
               await github.rest.repos.createRelease({
