@@ -63,7 +63,7 @@ jobs:
               }
 
               if (openIssues.length > 0) {
-                issueType = (milestoneName == 'next') ? 'New/Important' : 'Work In Progress'
+                issueType = (milestoneName == 'next') ? 'New/Important' + "\r\n" : 'Work In Progress'
                 spacer = (body == '') ? '' : "\r\n\r\n"
                 body = body.concat(spacer)
                   .concat(`* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}):`)
