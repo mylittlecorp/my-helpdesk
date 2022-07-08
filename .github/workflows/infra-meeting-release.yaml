@@ -51,7 +51,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            async function getMilestoneIssuesAsMarkdown(milestone, milestoneName) {
+            const getMilestoneIssuesAsMarkdown = async function(milestone, milestoneName) {
               const opts = github.rest.issues.listForRepo.endpoint.merge({
                 ...context.issue,
                 milestone,
