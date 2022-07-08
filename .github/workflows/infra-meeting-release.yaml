@@ -86,24 +86,18 @@ jobs:
             })
             const issues = await github.paginate(opts)
 
-            let milestoneIssues = []
+            let closedIssues = []
+            let openIssues = []
             for (const issue of issues) {
-              console.log('-----')
-              console.log(issue.id)
-              milestoneIssues[issue.state] = issue
-              /*
-              if (issue.number === context.issue.number) {
-                continue
+              if (issue.state == 'closed') {
+                closedIssues.push(issue)
+              } else {
+                openIssues.push(issue)
               }
-
-              if (issue.pull_request) {
-                return // Creator is already a contributor.
-              }
-              */
             }
             console.log("TADA?")
             // console.log(milestoneIssues)
-            for (const issue of milestoneIssues['closed']) {
+            for (const issue of closedIssues) {
               console.log('====')
               console.log(issue.state)
               console.log(issue.id)
