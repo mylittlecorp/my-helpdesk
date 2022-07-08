@@ -33,7 +33,23 @@ jobs:
     name: "Prepare infra meeting notes release"
     runs-on: "ubuntu-latest"
     steps:
-
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - name: Create tag
+        uses: actions/github-script@v5
+        env:
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+        with:
+          script: |
+            const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.payload.runNumber}`
+            console.log(tagRef)
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: tagRef,
+              sha: context.sha
+            })
       - name: "Determine tag"
         run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
       # - name: Generate token
@@ -91,12 +107,15 @@ jobs:
 
             releaseBodyCurrent = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBodyNext = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
-            releaseBody = '<pre>'.concat(releaseBodyCurrent)
+            releaseBody = '<details><summary>Markdown:</summary>'.concat("\r\n")
+              .concat(```'.concat(releaseBodyCurrent)
               .concat("\r\n")
               .concat('---')
               .concat("\r\n")
               .concat(releaseBodyNext)
-              .concat('</pre>')
+              .concat('```')
+              .concat("\r\n")
+              .concat('</detail>')
             
             console.log('releaseBody:')
             console.log(releaseBody)
