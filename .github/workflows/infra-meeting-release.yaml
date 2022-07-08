@@ -114,9 +114,7 @@ jobs:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
         with:
           script: |
-            console.log(context.payload)
-            const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.payload.runNumber}`
-            console.log(tagRef)
+            const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.runNumber}`
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
