@@ -86,7 +86,7 @@ jobs:
               .concat(releaseBodyCurrentAndNext)
               .concat("\r\n")
               .concat('</pre>')
-              .concat("\r\n")
+              .concat("\r\n\r\n")
               .concat('</detail>')
 
             // or
@@ -101,7 +101,7 @@ jobs:
               .concat('<details><summary>Preview:</summary>')
               .concat("\r\n")
               .concat(releaseBodyCurrentAndNext)
-              .concat("\r\n")
+              .concat("\r\n\r\n")
               .concat('</detail>')
 
             console.log('releaseBody:')
@@ -124,7 +124,7 @@ jobs:
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             })
-            console.log(`tagName:${tagName}``)
+            console.log(`tagName:${tagName}`)
             return tagName
       - name: "Create release"
         uses: "actions/github-script@v6"
@@ -133,7 +133,7 @@ jobs:
           RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
           script: |
-            console.log(`process.env.RELEASE_TAG:${process.env.RELEASE_TAG}``)
+            console.log(`process.env.RELEASE_TAG:${process.env.RELEASE_TAG}`)
             try {
               await github.rest.repos.createRelease({
                 draft: true,
