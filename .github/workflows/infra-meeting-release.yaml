@@ -108,14 +108,10 @@ jobs:
         uses: "actions/github-script@v6"
         env:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
-          RELEASE_TAG: ${{steps.create_tag.outputs.result}}
           RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
           script: |
-            // Remove the double quotes around the tag name
-            releaseTag = process.env.RELEASE_TAG.slice(1, -1);
-
-            releaseName = `infra-team-sync-${process.env.CURRENT_DATE}' //_${context.runNumber}`
+            releaseName = `infra-team-sync-${process.env.CURRENT_DATE}`
 
             // Create the (draft) release with the content retrieved in earlier step
             try {
