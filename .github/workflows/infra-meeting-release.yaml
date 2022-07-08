@@ -103,20 +103,11 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
-      - name: Create tag
-        id: create_tag
-        uses: actions/github-script@v6
-        env:
-          CURRENT_DATE: ${{ steps.date.outputs.date }}
-        with:
-          script: |
-            const tagName = `infra-team-sync-${process.env.CURRENT_DATE}' //_${context.runNumber}`
-            return tagName
-
       - name: "Create release"
         id: create_release
         uses: "actions/github-script@v6"
         env:
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
           RELEASE_TAG: ${{steps.create_tag.outputs.result}}
           RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
@@ -124,18 +115,20 @@ jobs:
             // Remove the double quotes around the tag name
             releaseTag = process.env.RELEASE_TAG.slice(1, -1);
 
+            releaseName = `infra-team-sync-${process.env.CURRENT_DATE}' //_${context.runNumber}`
+
             // Create the (draft) release with the content retrieved in earlier step
             try {
               await github.rest.repos.createRelease({
                 draft: true,
                 generate_release_notes: true,
-                name: releaseTag,
+                name: releaseName,
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: releaseTag,
+                tag_name: releaseName,
                 body: process.env.RELEASE_BODY,
-                // This doesn't seem to work if draft: true
+                // This doesn't work if draft: true, to be added via gha on release publication (+milestone closing/creation?)
                 discussion_category_name: 'General',
               });
             } catch (error) {
