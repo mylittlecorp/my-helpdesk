@@ -86,9 +86,12 @@ jobs:
             })
             const issues = await github.paginate(opts)
 
+            milestoneIssues = null
             for (const issue of issues) {
               console.log('-----')
               console.log(issue)
+              milestoneIssues[issue.state] = issue
+              /*
               if (issue.number === context.issue.number) {
                 continue
               }
@@ -96,7 +99,10 @@ jobs:
               if (issue.pull_request) {
                 return // Creator is already a contributor.
               }
+              */
             }
+            console.log("TADA?")
+            console.log(milestoneIssues)
 
             /*
             try {
