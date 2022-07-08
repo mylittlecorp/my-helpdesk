@@ -6,7 +6,6 @@ on:
       milestone_id:
         description: '"Current" milestone id to prepare as release'
         required: true
-        default: '1'
         type: string
       milestone_name:
         description: '"Current" milestone name'
@@ -53,11 +52,11 @@ jobs:
                   openIssues.push(issue)
                 }
               }
-              let body = `## [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone})`
+              let body = `## [${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone})`
               
               if (closedIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
-                  .concat(`### Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                  .concat(`### Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of closedIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
@@ -65,7 +64,7 @@ jobs:
 
               if (openIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
-                  .concat(`### Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                  .concat(`### Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of openIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
