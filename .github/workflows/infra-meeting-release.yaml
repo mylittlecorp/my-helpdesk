@@ -95,9 +95,14 @@ jobs:
                 openIssues.push(issue)
               }
             }
-            console.log("TADA?")
-            // console.log(milestoneIssues)
+            console.log("CLOSED")
             for (const issue of closedIssues) {
+              console.log('====')
+              console.log(issue.state)
+              console.log(issue.id)
+            }
+            console.log("OPEN")
+            for (const issue of openIssues) {
               console.log('====')
               console.log(issue.state)
               console.log(issue.id)
