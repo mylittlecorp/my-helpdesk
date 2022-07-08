@@ -33,26 +33,6 @@ jobs:
     name: "Prepare infra meeting notes release"
     runs-on: "ubuntu-latest"
     steps:
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-      - name: Create tag
-        uses: actions/github-script@v5
-        env:
-          CURRENT_DATE: ${{ steps.date.outputs.date }}
-        with:
-          script: |
-            console.log(context.payload)
-            const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.payload.runNumber}`
-            console.log(tagRef)
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: tagRef,
-              sha: context.sha
-            })
-      - name: "Determine tag"
-        run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
       # - name: Generate token
       #   id: generate_token
       #   uses: tibdex/github-app-token@v1
@@ -122,6 +102,30 @@ jobs:
             console.log('releaseBody:')
             console.log(releaseBody)
             return releaseBody
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - name: Create tag
+        id: create_tag
+        uses: actions/github-script@v5
+        env:
+          CURRENT_DATE: ${{ steps.date.outputs.date }}
+        with:
+          script: |
+            console.log(context.payload)
+            const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.payload.runNumber}`
+            console.log(tagRef)
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: tagRef,
+              sha: context.sha
+            })
+            return tagRef
+      - name: "Determine tag"
+        env:
+          NEW_TAG_REF: ${{ steps.create_tag.outputs.result }}
+        run: "echo \"RELEASE_TAG=${NEW_TAG_REF#refs/tags/}\" >> $GITHUB_ENV"
       - name: "Create release"
         uses: "actions/github-script@v6"
         env:
