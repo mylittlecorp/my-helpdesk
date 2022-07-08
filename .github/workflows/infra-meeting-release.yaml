@@ -122,7 +122,7 @@ jobs:
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: releaseName,
+                tag_name: `${releaseName}_${context.runNumber}`,
                 body: process.env.RELEASE_BODY,
                 // This doesn't work if draft: true, to be added via gha on release publication (+milestone closing/creation?)
                 discussion_category_name: 'General',
