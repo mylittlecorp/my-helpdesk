@@ -85,7 +85,7 @@ jobs:
               .concat(bodyNext)
 
             // The release body consist of the markdown content gathered above, first as a code block, then as markdown in a <details> block
-            releaseBody = 'Markdown for the infra meeting notes preparation:'.concat("\r\n\r\n")
+            releaseBody = 'Markdown for the infra team sync meeting notes preparation:'.concat("\r\n\r\n")
               .concat('<pre>')
               .concat("\r\n")
               .concat(bodyCurrentAndNext)
