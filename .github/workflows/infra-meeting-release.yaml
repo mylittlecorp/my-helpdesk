@@ -51,7 +51,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            function getMilestoneIssuesAsMarkdown(milestone, milestoneName) {
+            async function getMilestoneIssuesAsMarkdown(milestone, milestoneName) {
               const opts = github.rest.issues.listForRepo.endpoint.merge({
                 ...context.issue,
                 milestone,
@@ -87,9 +87,9 @@ jobs:
             console.log('start')
 
             const nextMilestoneId = 10
-            releaseBody = getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
+            releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBody = releaseBody.concat("\r\n<hr>")
-            releaseBody = getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
+            releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
 
             console.log('releaseBody:')
             console.log(releaseBody)
