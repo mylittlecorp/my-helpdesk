@@ -88,6 +88,22 @@ jobs:
               .concat('</pre>')
               .concat("\r\n")
               .concat('</detail>')
+
+            // or
+
+            releaseBody = 'Markdown:'.concat("\r\n")
+              .concat("\r\n")
+              .concat('<pre>')
+              .concat(releaseBodyCurrentAndNext)
+              .concat("\r\n")
+              .concat('</pre>')
+              .concat("\r\n")
+              .concat('<details><summary>Preview:</summary>')
+              .concat("\r\n")
+              .concat(releaseBodyCurrentAndNext)
+              .concat("\r\n")
+              .concat('</detail>')
+
             console.log('releaseBody:')
             console.log(releaseBody)
             return releaseBody
