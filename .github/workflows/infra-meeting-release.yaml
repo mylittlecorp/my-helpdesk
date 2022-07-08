@@ -7,12 +7,22 @@ on:
       milestone_id:
         description: 'Milestone id to prepare for release'
         required: true
-        default: '1' 
+        default: '1'
         type: string
       milestone_name:
         description: 'Milestone name'
         required: true
-        default: 'current' 
+        default: 'current'
+        type: string
+      next_milestone_id:
+        description: '"Next" milestone id'
+        required: true
+        default: '4'
+        type: string
+      next_milestone_name:
+        description: '"Next" milestone name'
+        required: true
+        default: 'next'
         type: string
 
 
@@ -23,40 +33,6 @@ jobs:
     name: "Prepare infra meeting notes release"
     runs-on: "ubuntu-latest"
     steps:
-
-
-      # - name: Retrieve version
-      #   run: |
-      #     echo "::set-output name=TAG_NAME::$(cat projectFile | grep -Po '(?<=Version>).*(?=</Version>)')"
-      #   id: version
-
-      #- name: Create Release
-       # id: create_release
-        # uses: actions/create-release@v1
-        ##env:
-         # GITHUB_TOKEN: ${{ secrets.token }}
-        #with:
-         # tag_name: ${{ steps.version.outputs.TAG_NAME }}
-
-
-      # - name: Run script file
-      #   run: .github/workflows/milestone2md.sh
-        #run: |
-        #  echo "TEST1"
-        #  echo ${GITHUB_WORKSPACE}
-        #  echo "TEST2"
-        #  echo $GH_CURRENT_MILESTONE_ID
-        #  echo "END TEST"
-        #  ls -R ${PWD}
-        #  echo "END TEST"
-        #  ls -R ${GITHUB_WORKSPACE}
-        #  chmod +x "${PWD}/.github/workflows/milestone2md.sh"
-        #  echo "RELEASE_BODY=$(${PWD}/.github/workflows/milestone2md.sh)" >> $GITHUB_ENV
-        # shell: bash
-        # id: shell_script
-        # env:
-        #   GH_CURRENT_MILESTONE_ID: ${{ inputs.milestone_id }}
-
 
       # - name: "Determine tag"
       #   run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
@@ -73,44 +49,50 @@ jobs:
       - name: "Create release"
         uses: "actions/github-script@v6"
         with:
-          # github-token: "${{ steps.generate_token.outputs.token }}"
           script: |
-            console.log('start')
-            console.log('milestone_id:' + context.payload.inputs.milestone_id)
+            function getMilestoneIssuesAsMarkdown(milestone, milestoneName) {
+              const opts = github.rest.issues.listForRepo.endpoint.merge({
+                ...context.issue,
+                milestone,
+                state: 'all'
+              })
+              const issues = await github.paginate(opts)
 
-            const milestone = context.payload.inputs.milestone_id
-            const opts = github.rest.issues.listForRepo.endpoint.merge({
-              ...context.issue,
-              milestone,
-              state: 'all'
-            })
-            const issues = await github.paginate(opts)
-
-            let releaseBody = `## Closed issues in [${context.payload.inputs.milestone_name} milestone](${context.payload.repository.html_url}/milestones/${context.payload.inputs.milestone_id}):`
-            let closedIssues = []
-            let openIssues = []
-            for (const issue of issues) {
-              if (issue.state == 'closed') {
-                closedIssues.push(issue)
-              } else {
-                openIssues.push(issue)
+              let closedIssues = []
+              let openIssues = []
+              for (const issue of issues) {
+                if (issue.state == 'closed') {
+                  closedIssues.push(issue)
+                } else {
+                  openIssues.push(issue)
+                }
               }
-            }
-            console.log("CLOSED")
-            for (const issue of closedIssues) {
-              releaseBody = releaseBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+              
+              let returnedBody = ''
+              if (count(closedIssues) > 0) `## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`
+              
+              for (const issue of closedIssues) {
+                returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+              }
+
+              if (count(openIssues) > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`
+
+              for (const issue of openIssues) {
+                returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+              }
+              return returnedBody
             }
 
-            releaseBody = releaseBody.concat("\r\n").concat(`## Open issues in [${context.payload.inputs.milestone_name} milestone](${context.payload.repository.html_url}/milestones/${context.payload.inputs.milestone_id}):`)
+            console.log('start')
 
-            for (const issue of openIssues) {
-              releaseBody = releaseBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
-            }
+            const nextMilestoneId = 10
+            releaseBody = getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
+            releaseBody = releaseBody.concat("\r\n<hr>")
+            releaseBody = getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
 
             console.log('releaseBody:')
             console.log(releaseBody)
 
-            /*
             try {
               await github.rest.repos.createRelease({
                 draft: true,
@@ -120,9 +102,8 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.RELEASE_TAG,
-                body: process.env.RELEASE_BODY,
+                body: releaseBody,
               });
             } catch (error) {
               core.setFailed(error.message);
             }
-            */
