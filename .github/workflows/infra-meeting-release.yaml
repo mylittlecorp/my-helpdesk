@@ -1,22 +1,22 @@
-name: "Prepare infra meeting notes release"
+name: "Prepare infra meeting notes as release"
 
-# https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
 on:
   workflow_dispatch:
     inputs:
       milestone_id:
-        description: 'Milestone id to prepare for release'
+        description: '"Current" milestone id to prepare as release'
         required: true
         default: '1'
         type: string
       milestone_name:
-        description: 'Milestone name'
+        description: '"Current" milestone name'
         required: true
         default: 'current'
         type: string
       next_milestone_id:
         description: '"Next" milestone id'
         required: true
+        # TODO: set this default 'next' value via another GHA retrieving the last milestone opened
         default: '4'
         type: string
       next_milestone_name:
@@ -25,10 +25,9 @@ on:
         default: 'next'
         type: string
 
-
 jobs:
   release:
-    name: "Prepare infra meeting notes release"
+    name: "Prepare infra meeting notes as release"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Gather release body"
@@ -37,8 +36,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const getMilestoneIssuesAsMarkdown = async function(milestone, milestoneName) {
-            console.log(`milestone: ${milestone}, milestoneName: ${milestoneName}`)
+            const getMilestoneAsMarkdown = async function(milestone, milestoneName) {
               const opts = github.rest.issues.listForRepo.endpoint.merge({
                 ...context.issue,
                 milestone,
@@ -50,66 +48,62 @@ jobs:
               let openIssues = []
               for (const issue of issues) {
                 if (issue.state == 'closed') {
-                  console.log(`issue ${issue.html_url} closed`)
                   closedIssues.push(issue)
                 } else {
-                  console.log(`issue ${issue.html_url} not closed (${issue.state})`)
                   openIssues.push(issue)
                 }
               }
-              let returnedBody = ''
+              let body = ''
               
-              if (closedIssues.length > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
-              for (const issue of closedIssues) {
-                returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+              if (closedIssues.length > 0) {
+                body = body.concat("\r\n\r\n")
+                  .concat(`## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                for (const issue of closedIssues) {
+                  body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+                }
               }
-              
-              if (openIssues.length > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
-              for (const issue of openIssues) {
-                returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+
+              if (openIssues.length > 0) {
+                body = body.concat("\r\n\r\n")
+                  .concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                for (const issue of openIssues) {
+                  body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+                }
               }
-              
-              return returnedBody
+
+              return body
             }
 
-            releaseBodyCurrent = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
-            releaseBodyNext = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
+            // Retrieve the markdown content related to the "current" milestone issues
+            bodyCurrent = await getMilestoneAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             
-            releaseBodyCurrentAndNext = releaseBodyCurrent.concat("\r\n\r\n")
+            // Retrieve the markdown content related to the "next" milestone issues
+            bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
+            
+            bodyCurrentAndNext = bodyCurrent.concat("\r\n\r\n")
               .concat('---')
-              .concat(releaseBodyNext)
-            
-            releaseBody = releaseBodyCurrentAndNext.concat("\r\n")
-              .concat('<details><summary>Markdown:</summary>')
-              .concat("\r\n")
+              .concat(bodyNext)
+
+            // The release body consist of the markdown content gathered above, first as a code block, then as markdown in a <details> block
+            releaseBody = 'Markdown:'.concat("\r\n\r\n")
               .concat('<pre>')
-              .concat(releaseBodyCurrentAndNext)
+              .concat("\r\n")
+              .concat(bodyCurrentAndNext)
               .concat("\r\n")
               .concat('</pre>')
               .concat("\r\n\r\n")
-              .concat('</detail>')
-
-            // or
-
-            releaseBody = 'Markdown:'.concat("\r\n")
-              .concat("\r\n")
-              .concat('<pre>')
-              .concat(releaseBodyCurrentAndNext)
-              .concat("\r\n")
-              .concat('</pre>')
-              .concat("\r\n")
               .concat('<details><summary>Preview:</summary>')
-              .concat("\r\n")
-              .concat(releaseBodyCurrentAndNext)
+              .concat("\r\n\r\n")
+              .concat(bodyCurrentAndNext)
               .concat("\r\n\r\n")
               .concat('</detail>')
 
-            console.log('releaseBody:')
-            console.log(releaseBody)
             return releaseBody
+
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
       - name: Create tag
         id: create_tag
         uses: actions/github-script@v6
@@ -124,18 +118,20 @@ jobs:
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             })
-            console.log(`tagName:${tagName}`)
             return tagName
+
       - name: "Create release"
+        id: create_release
         uses: "actions/github-script@v6"
         env:
           RELEASE_TAG: ${{steps.create_tag.outputs.result}}
           RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
           script: |
-            console.log(`process.env.RELEASE_TAG:${process.env.RELEASE_TAG}`)
+            // Remove the double quotes around the tag name
             releaseTag = process.env.RELEASE_TAG.slice(1, -1);
-            console.log(`releaseTag:${releaseTag}`)
+
+            // Create the release with the content retrieved in earlier step
             try {
               await github.rest.repos.createRelease({
                 draft: true,
