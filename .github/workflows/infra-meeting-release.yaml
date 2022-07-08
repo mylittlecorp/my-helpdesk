@@ -82,18 +82,20 @@ jobs:
             // Retrieve the markdown content related to the "next" milestone issues
             bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             
-            releaseBody = `Markdown for the infra team sync meeting notes preparation:
+            releaseBody = `<details><summary>Preview:</summary>
+
+            ${bodyCurrent}
+            ${bodyNext}
+
+            </detail>
+            
+            Markdown for the infra team sync meeting notes preparation:
             <pre>
             ${bodyCurrent}
             ${bodyNext}
             </pre>
             
-            <details><summary>Preview:</summary>
-
-            ${bodyCurrent}
-            ${bodyNext}
-
-            </detail>`
+            `
 
             return releaseBody
 
@@ -132,7 +134,7 @@ jobs:
             try {
               await github.rest.repos.createRelease({
                 draft: false,
-                generate_release_notes: false,
+                generate_release_notes: true,
                 name: releaseTag,
                 owner: context.repo.owner,
                 prerelease: false,
