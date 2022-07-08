@@ -56,15 +56,16 @@ jobs:
               
               if (closedIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
-                  .concat(`* [Done, ${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`)
+                  .concat(`* [Done](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`)
                 for (const issue of closedIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
               }
 
               if (openIssues.length > 0) {
+                issueType = (milestoneName == 'next') ? 'New/Important' : 'Work In Progress'
                 body = body.concat("\r\n\r\n")
-                  .concat(`* [Work In Progress, ${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone}):`)
+                  .concat(`* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of openIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
