@@ -52,7 +52,7 @@ jobs:
                   openIssues.push(issue)
                 }
               }
-              let body = `### [${milestoneName} milestone](${context.payload.repository.html_url}/milestone/${milestone})`
+              let body = `<!-- ${milestoneName} milestone: ${context.payload.repository.html_url}/milestone/${milestone} -->`
               
               if (closedIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
