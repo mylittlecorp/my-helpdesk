@@ -75,13 +75,13 @@ jobs:
               }
               */
               let returnedBody = ''
-              if (count(closedIssues) > 0) `## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`
+              if (count(closedIssues) > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
               /*
               for (const issue of closedIssues) {
                 returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
               }
               */
-              if (count(openIssues) > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`
+              if (count(openIssues) > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
               /*
               for (const issue of openIssues) {
                 returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
