@@ -109,12 +109,14 @@ jobs:
         with:
           script: |
             const tagName = `infra-team-sync-${process.env.CURRENT_DATE}_${context.runNumber}`
+            /*
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             })
+            */
             return tagName
 
       - name: "Create release"
