@@ -42,6 +42,7 @@ jobs:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
         with:
           script: |
+            console.log(context.payload)
             const tagRef = `refs/tags/infra-team-sync-${process.env.CURRENT_DATE}_${context.payload.runNumber}`
             console.log(tagRef)
             github.rest.git.createRef({
@@ -108,7 +109,8 @@ jobs:
             releaseBodyCurrent = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBodyNext = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             releaseBody = '<details><summary>Markdown:</summary>'.concat("\r\n")
-              .concat(```'.concat(releaseBodyCurrent)
+              .concat('```')
+              .concat(releaseBodyCurrent)
               .concat("\r\n")
               .concat('---')
               .concat("\r\n")
