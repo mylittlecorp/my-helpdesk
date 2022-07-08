@@ -91,7 +91,7 @@ jobs:
             <details><summary>Preview:</summary>
 
             ${bodyCurrent}
-            
+
             ${bodyNext}
 
             </details>
@@ -110,15 +110,7 @@ jobs:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
         with:
           script: |
-            const tagName = `infra-team-sync-${process.env.CURRENT_DATE}_${context.runNumber}`
-            /*
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tagName}`,
-              sha: context.sha
-            })
-            */
+            const tagName = `infra-team-sync-${process.env.CURRENT_DATE}' //_${context.runNumber}`
             return tagName
 
       - name: "Create release"
