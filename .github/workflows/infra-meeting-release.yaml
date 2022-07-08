@@ -70,8 +70,6 @@ jobs:
                 }
               }
 
-              body = body.concat("\r\n\r\n")
-
               return body
             }
 
