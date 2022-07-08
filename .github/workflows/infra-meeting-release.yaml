@@ -63,8 +63,8 @@ jobs:
               }
 
               if (openIssues.length > 0) {
-                issueType = (milestoneName == 'next') ? 'New/Important' : 'Work In Progress'
-                spacer = (body == '' || milestoneName != 'next') ? '' : "\r\n\r\n"
+                issueType = (milestoneName != 'next') ? 'Work In Progress' : 'New/Important'
+                spacer = (body != '' && milestoneName != 'next') ? "\r\n\r\n" : ''
                 body = body.concat(spacer)
                   .concat(`* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of openIssues) {
@@ -84,12 +84,14 @@ jobs:
             releaseBody = `Markdown for the infra team sync meeting notes preparation:
             <pre>
             ${bodyCurrent}
+
             ${bodyNext}
             </pre>
             
             <details><summary>Preview:</summary>
 
             ${bodyCurrent}
+            
             ${bodyNext}
 
             </details>
