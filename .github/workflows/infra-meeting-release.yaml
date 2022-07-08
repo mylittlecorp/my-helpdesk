@@ -44,7 +44,10 @@ jobs:
       #     private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
       - name: View context attributes
         uses: actions/github-script@v6
+        env:
+          START_ENV: 'hello'
         with:
+          stuff: 'bidule'
           script: console.log(context)
       - name: "Gather release body"
         uses: "actions/github-script@v6"
