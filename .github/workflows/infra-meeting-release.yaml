@@ -64,14 +64,13 @@ jobs:
 
               if (openIssues.length > 0) {
                 issueType = (milestoneName == 'next') ? 'New/Important' : 'Work In Progress'
-                body = body.concat("\r\n\r\n")
+                spacer = (body == '') ? '' : "\r\n\r\n"
+                body = body.concat(spacer)
                   .concat(`* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of openIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
               }
-
-              // body = body.concat("\r\n\r\n")
 
               return body
             }
