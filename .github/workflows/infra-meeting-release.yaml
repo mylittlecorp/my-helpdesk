@@ -98,12 +98,10 @@ jobs:
               .concat("\r\n\r\n")
               .concat('</detail>')
 
-            releaseBody = `Markdown for the infra team sync meeting notes preparation:
-              
+            releaseBody = 
+              `Markdown for the infra team sync meeting notes preparation:
               <pre>
-              
               ${bodyCurrentAndNext}
-              
               </pre>
               
               <details><summary>Preview:</summary>
