@@ -53,11 +53,11 @@ jobs:
                   openIssues.push(issue)
                 }
               }
-              let body = ''
+              let body = `## [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone})`
               
               if (closedIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
-                  .concat(`## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                  .concat(`### Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
                 for (const issue of closedIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
@@ -65,11 +65,13 @@ jobs:
 
               if (openIssues.length > 0) {
                 body = body.concat("\r\n\r\n")
-                  .concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
+                  .concat(`### Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
                 for (const issue of openIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
               }
+
+              body = body.concat("\r\n\r\n")
 
               return body
             }
@@ -80,9 +82,7 @@ jobs:
             // Retrieve the markdown content related to the "next" milestone issues
             bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             
-            bodyCurrentAndNext = bodyCurrent.concat("\r\n\r\n")
-              .concat('---')
-              .concat(bodyNext)
+            bodyCurrentAndNext = bodyCurrent.concat("\r\n\r\n").concat(bodyNext)
 
             // The release body consist of the markdown content gathered above, first as a code block, then as markdown in a <details> block
             releaseBody = 'Markdown for the infra team sync meeting notes preparation:'.concat("\r\n\r\n")
