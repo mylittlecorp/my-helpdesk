@@ -92,15 +92,16 @@ jobs:
             }
 
             console.log('start')
-
+            /*
             const nextMilestoneId = 10
             releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBody = releaseBody.concat("\r\n<hr>")
             releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
-
+            
             console.log('releaseBody:')
             console.log(releaseBody)
             return releaseBody
+            */
       - name: "Create release"
         uses: "actions/github-script@v6"
         with:
