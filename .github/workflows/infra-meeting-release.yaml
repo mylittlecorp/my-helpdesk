@@ -52,11 +52,11 @@ jobs:
                   openIssues.push(issue)
                 }
               }
-              let body = `<!-- ${milestoneName} milestone: ${context.payload.repository.html_url}/milestone/${milestone} -->`
+
+              let body = ''
               
               if (closedIssues.length > 0) {
-                body = body.concat("\r\n\r\n")
-                  .concat(`* [Done](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`)
+                body = `* [Done](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`
                 for (const issue of closedIssues) {
                   body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
@@ -71,6 +71,8 @@ jobs:
                 }
               }
 
+              body = body.concat("\r\n\r\n")
+              
               return body
             }
 
