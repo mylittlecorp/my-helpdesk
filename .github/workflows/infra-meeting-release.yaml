@@ -6,6 +6,7 @@ on:
       milestone_id:
         description: '"Current" milestone id to prepare as release'
         required: true
+        # TODO: set a default value via another GHA retrieving the last milestone opened
         type: string
       milestone_name:
         description: '"Current" milestone name'
@@ -15,7 +16,6 @@ on:
       next_milestone_id:
         description: '"Next" milestone id'
         required: true
-        # TODO: set this default 'next' value via another GHA retrieving the last milestone opened
         default: '4'
         type: string
       next_milestone_name:
@@ -71,7 +71,7 @@ jobs:
                 }
               }
 
-              body = body.concat("\r\n\r\n")
+              // body = body.concat("\r\n\r\n")
 
               return body
             }
@@ -82,19 +82,18 @@ jobs:
             // Retrieve the markdown content related to the "next" milestone issues
             bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             
-            releaseBody = `<details><summary>Preview:</summary>
-
-            ${bodyCurrent}
-            ${bodyNext}
-
-            </detail>
-            
-            Markdown for the infra team sync meeting notes preparation:
+            releaseBody = `Markdown for the infra team sync meeting notes preparation:
             <pre>
             ${bodyCurrent}
             ${bodyNext}
             </pre>
             
+            <details><summary>Preview:</summary>
+
+            ${bodyCurrent}
+            ${bodyNext}
+
+            </details>
             `
 
             return releaseBody
