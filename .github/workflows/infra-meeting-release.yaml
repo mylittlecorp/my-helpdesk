@@ -82,21 +82,20 @@ jobs:
             // Retrieve the markdown content related to the "next" milestone issues
             bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             
-            releaseBody = 
-              `Markdown for the infra team sync meeting notes preparation:
-              <pre>
-              ${bodyCurrent}
+            releaseBody = `Markdown for the infra team sync meeting notes preparation:
+            <pre>
+            ${bodyCurrent}
 
-              ${bodyNext}
-              </pre>
-              
-              <details><summary>Preview:</summary>
+            ${bodyNext}
+            </pre>
+            
+            <details><summary>Preview:</summary>
 
-              ${bodyCurrent}
+            ${bodyCurrent}
 
-              ${bodyNext}
+            ${bodyNext}
 
-              </detail>`
+            </detail>`
 
             return releaseBody
 
