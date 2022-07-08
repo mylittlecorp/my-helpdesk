@@ -103,6 +103,8 @@ jobs:
             return releaseBody
       - name: "Create release"
         uses: "actions/github-script@v6"
+        env:
+          RELEASE_TAG: context.payload.runNumber
         with:
           script: |
             try {
