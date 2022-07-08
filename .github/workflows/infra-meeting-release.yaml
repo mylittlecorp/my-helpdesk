@@ -55,18 +55,15 @@ jobs:
           result-encoding: string
           script: |
             const getMilestoneIssuesAsMarkdown = function(milestone, milestoneName) {
-              /*
               const opts = github.rest.issues.listForRepo.endpoint.merge({
                 ...context.issue,
                 milestone,
                 state: 'all'
               })
               const issues = await github.paginate(opts)
-              */
 
               let closedIssues = []
               let openIssues = []
-              /*
               for (const issue of issues) {
                 if (issue.state == 'closed') {
                   closedIssues.push(issue)
@@ -74,26 +71,21 @@ jobs:
                   openIssues.push(issue)
                 }
               }
-              */
               let returnedBody = ''
+              
               if (closedIssues.length > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Closed issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
-              /*
               for (const issue of closedIssues) {
                 returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
               }
-              */
+              
               if (openIssues.length > 0) returnedBody = returnedBody.concat("\r\n\r\n").concat(`## Open issues in [${milestoneName} milestone](${context.payload.repository.html_url}/milestones/${milestone}):`)
-              /*
               for (const issue of openIssues) {
                 returnedBody = returnedBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
               }
-              */
-              console.log("before return")
+              
               return returnedBody
             }
 
-            console.log('start')
-            const nextMilestoneId = 10
             releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBody = releaseBody.concat("\r\n<hr>")
             releaseBody = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
@@ -103,8 +95,6 @@ jobs:
             return releaseBody
       - name: "Create release"
         uses: "actions/github-script@v6"
-        env:
-          RELEASE_TAG: context.payload.runNumber
         with:
           script: |
             try {
@@ -115,7 +105,7 @@ jobs:
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: process.env.RELEASE_TAG,
+                tag_name: context.payload.runNumber,
                 body: "${{steps.gather_release_body.outputs.result}}",
               });
             } catch (error) {
