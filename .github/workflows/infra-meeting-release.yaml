@@ -27,24 +27,10 @@ on:
 
 
 jobs:
-
-  # https://localheinz.com/blog/2022/01/24/creating-releases-with-github-actions/
   release:
     name: "Prepare infra meeting notes release"
     runs-on: "ubuntu-latest"
     steps:
-      # - name: Generate token
-      #   id: generate_token
-      #   uses: tibdex/github-app-token@v1
-      #   with:
-      #     app_id: ${{ secrets.INFRA_GITHUB_APP_ID }}
-      #     private_key: ${{ secrets.INFRA_GITHUB_APP_PRIVATE_KEY }}
-      - name: View context attributes
-        uses: actions/github-script@v6
-        env:
-          START_ENV: 'hello'
-        with:
-          script: console.log(context)
       - name: "Gather release body"
         id: gather_release_body
         uses: "actions/github-script@v6"
@@ -88,14 +74,16 @@ jobs:
 
             releaseBodyCurrent = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBodyNext = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
-            releaseBody = '<details><summary>Markdown:</summary>'.concat("\r\n")
-              .concat('<pre>')
-              .concat(releaseBodyCurrent)
-              .concat("\r\n")
+            releaseBodyCurrentAndNext = releaseBodyCurrent.concat("\r\n\r\n")
               .concat('---')
               .concat("\r\n")
               .concat(releaseBodyNext)
+            releaseBody = releaseBodyCurrentAndNext.concat('<details><summary>Markdown:</summary>')
+              .concat("\r\n")
               .concat('<pre>')
+              .concat(releaseBodyCurrentAndNext)
+              .concat("\r\n")
+              .concat('</pre>')
               .concat("\r\n")
               .concat('</detail>')
             console.log('releaseBody:')
