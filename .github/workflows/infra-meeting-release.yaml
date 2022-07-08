@@ -139,7 +139,7 @@ jobs:
                 repo: context.repo.repo,
                 tag_name: releaseTag,
                 body: process.env.RELEASE_BODY,
-                discussion_category_name: 'Announcements',
+                discussion_category_name: 'General',
               });
             } catch (error) {
               core.setFailed(error.message);
