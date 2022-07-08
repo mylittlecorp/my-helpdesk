@@ -109,7 +109,7 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
       - name: Create tag
         id: create_tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         env:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
         with:
