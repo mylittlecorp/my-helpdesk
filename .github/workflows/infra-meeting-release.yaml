@@ -106,12 +106,13 @@ jobs:
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             })
+            console.log(tagName)
             return tagName
       - name: "Create release"
         uses: "actions/github-script@v6"
         env:
-          RELEASE_TAG: ${{steps.gather_release_body.outputs.result}}
-          RELEASE_BODY: ${{steps.create_tag.outputs.result}}
+          RELEASE_TAG: ${{steps.create_tag.outputs.result}}
+          RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
           script: |
             try {
