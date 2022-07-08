@@ -86,6 +86,7 @@ jobs:
             })
             const issues = await github.paginate(opts)
 
+            let releaseBody = `## Closed issues in [${context.payload.inputs.milestone_name} milestone](${context.payload.repository.html_url}/milestones/${context.payload.inputs.milestone_id}):`
             let closedIssues = []
             let openIssues = []
             for (const issue of issues) {
@@ -97,16 +98,17 @@ jobs:
             }
             console.log("CLOSED")
             for (const issue of closedIssues) {
-              console.log('====')
-              console.log(issue.state)
-              console.log(issue.id)
+              releaseBody = releaseBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
             }
-            console.log("OPEN")
+
+            releaseBody = releaseBody.concat("\r\n").concat(`## Open issues in [${context.payload.inputs.milestone_name} milestone](${context.payload.repository.html_url}/milestones/${context.payload.inputs.milestone_id}):`)
+
             for (const issue of openIssues) {
-              console.log('====')
-              console.log(issue.state)
-              console.log(issue.id)
+              releaseBody = releaseBody.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
             }
+
+            console.log('releaseBody:')
+            console.log(releaseBody)
 
             /*
             try {
