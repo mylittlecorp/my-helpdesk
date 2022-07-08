@@ -102,7 +102,7 @@ jobs:
               */
             }
             console.log("TADA?")
-            # console.log(milestoneIssues)
+            // console.log(milestoneIssues)
             for (const issue of milestoneIssues['closed']) {
               console.log('====')
               console.log(issue.state)
