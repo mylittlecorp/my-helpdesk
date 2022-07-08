@@ -48,12 +48,10 @@ jobs:
               const issues = await github.paginate(opts)
 
               let markdown = ''
-              let category = ''
+              let category = 'Done'
 
-              if (issuesState == 'closed') {
-                // There should not be any closed issue in the 'next' milestone
-                category = 'Done'
-              } else {
+              // There should not be any closed issue in the 'next' milestone, only 'Done' ones
+              if (issuesState != 'closed') {
                 category = (milestoneName != 'next') ? 'Work In Progress' : 'New/Important'
               }
 
@@ -71,7 +69,7 @@ jobs:
             wip = await getMilestoneAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name, 'closed')
             next = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name, 'open')
 
-            return `Markdown for the infra team sync meeting notes preparation, from the [${context.payload.inputs.milestone_name}](${context.payload.repository.html_url}/milestone/${context.payload.inputs.milestone_id}) and the [${context.payload.inputs.next_milestone_name}](${context.payload.repository.html_url}/milestone/${context.payload.inputs.next_milestone_id}) milestones:
+            return `Markdown for the infra team sync meeting notes preparation:
             <pre>
             ${done}
 
@@ -89,7 +87,8 @@ jobs:
             ${next}
 
             </details>
-            `
+
+            Generated from the [${context.payload.inputs.milestone_name}](${context.payload.repository.html_url}/milestone/${context.payload.inputs.milestone_id}) and the [${context.payload.inputs.next_milestone_name}](${context.payload.repository.html_url}/milestone/${context.payload.inputs.next_milestone_id}) milestones.`
 
       - name: "Create release"
         id: create_release
