@@ -72,7 +72,7 @@ jobs:
               }
 
               body = body.concat("\r\n\r\n")
-              
+
               return body
             }
 
@@ -85,14 +85,12 @@ jobs:
             releaseBody = `Markdown for the infra team sync meeting notes preparation:
             <pre>
             ${bodyCurrent}
-
             ${bodyNext}
             </pre>
             
             <details><summary>Preview:</summary>
 
             ${bodyCurrent}
-
             ${bodyNext}
 
             </detail>`
@@ -141,6 +139,7 @@ jobs:
                 repo: context.repo.repo,
                 tag_name: releaseTag,
                 body: process.env.RELEASE_BODY,
+                discussion_category_name: 'Announcements',
               });
             } catch (error) {
               core.setFailed(error.message);
