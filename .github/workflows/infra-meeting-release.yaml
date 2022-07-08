@@ -49,6 +49,7 @@ jobs:
         with:
           script: console.log(context)
       - name: "Gather release body"
+        id: gather_release_body
         uses: "actions/github-script@v6"
         with:
           result-encoding: string
@@ -113,7 +114,7 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.RELEASE_TAG,
-                body: releaseBody,
+                body: "${{steps.gather_release_body.outputs.result}}",
               });
             } catch (error) {
               core.setFailed(error.message);
