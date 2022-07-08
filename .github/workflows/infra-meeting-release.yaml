@@ -91,7 +91,12 @@ jobs:
 
             releaseBodyCurrent = await getMilestoneIssuesAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             releaseBodyNext = await getMilestoneIssuesAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
-            releaseBody = releaseBodyCurrent.concat("\r\n<hr>").concat(releaseBodyNext)
+            releaseBody = '<pre>'.concat(releaseBodyCurrent)
+              .concat("\r\n")
+              .concat('---')
+              .concat("\r\n")
+              .concat(releaseBodyNext)
+              .concat('</pre>')
             
             console.log('releaseBody:')
             console.log(releaseBody)
