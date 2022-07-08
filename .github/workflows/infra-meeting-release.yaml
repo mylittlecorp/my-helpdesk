@@ -75,19 +75,52 @@ jobs:
               return markdown
             }
 
+            const getMilestoneAsMarkdownWithState = async function(milestone, milestoneName, issuesState) {
+              const opts = github.rest.issues.listForRepo.endpoint.merge({
+                ...context.issue,
+                milestone,
+                state: issuesState
+              })
+              const issues = await github.paginate(opts)
+
+              let markdown = ''
+
+              if (issues.length > 0) {
+                if (issuesState == 'closed') {
+                  issueType = 'Done'
+                } else {
+                  issueType = (milestoneName != 'next') ? 'Work In Progress' : 'New/Important'
+                }
+                markdown = `* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`
+                for (const issue of issues) {
+                  markdown = markdown.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+                }
+              }
+
+              return markdown
+            }
+
             current = await getMilestoneAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
             next = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
 
+            currentDone = await getMilestoneAsMarkdownWithState(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name, 'open')
+            currentWip = await getMilestoneAsMarkdownWithState(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name, 'closed')
+            next = await getMilestoneAsMarkdownWithState(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name, 'open')
+
             return `Markdown for the infra team sync meeting notes preparation:
             <pre>
-            ${current}
+            ${currentDone}
+
+            ${currentWip}
 
             ${next}
             </pre>
 
             <details><summary>Preview:</summary>
 
-            ${current}
+            ${currentDone}
+
+            ${currentWip}
 
             ${next}
 
