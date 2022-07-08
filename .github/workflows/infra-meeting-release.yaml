@@ -29,8 +29,8 @@ jobs:
     name: "Prepare infra meeting notes as release"
     runs-on: "ubuntu-latest"
     steps:
-      - name: "Gather release body"
-        id: gather_release_body
+      - name: "Generate markdown from current and next milestone"
+        id: milestones_as_markdown
         uses: "actions/github-script@v6"
         with:
           result-encoding: string
@@ -53,53 +53,48 @@ jobs:
                 }
               }
 
-              let body = ''
-              
+              let markdown = ''
+
               if (closedIssues.length > 0) {
-                body = `* [Done](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`
+                markdown = `* [Done](${context.payload.repository.html_url}/milestone/${milestone}?closed=1):`
                 for (const issue of closedIssues) {
-                  body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+                  markdown = markdown.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
               }
 
               if (openIssues.length > 0) {
                 issueType = (milestoneName != 'next') ? 'Work In Progress' : 'New/Important'
-                spacer = (body != '' && milestoneName != 'next') ? "\r\n\r\n" : ''
-                body = body.concat(spacer)
+                spacer = (markdown != '' && milestoneName != 'next') ? "\r\n\r\n" : ''
+                markdown = markdown.concat(spacer)
                   .concat(`* [${issueType}](${context.payload.repository.html_url}/milestone/${milestone}):`)
                 for (const issue of openIssues) {
-                  body = body.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
+                  markdown = markdown.concat("\r\n").concat(`  * [${issue.title}](${issue.html_url})`)
                 }
               }
 
-              return body
+              return markdown
             }
 
-            // Retrieve the markdown content related to the "current" milestone issues
-            bodyCurrent = await getMilestoneAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
-            
-            // Retrieve the markdown content related to the "next" milestone issues
-            bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
-            
-            releaseBody = `Markdown for the infra team sync meeting notes preparation:
-            <pre>
-            ${bodyCurrent}
+            current = await getMilestoneAsMarkdown(context.payload.inputs.milestone_id, context.payload.inputs.milestone_name)
+            next = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
 
-            ${bodyNext}
+            return `Markdown for the infra team sync meeting notes preparation:
+            <pre>
+            ${current}
+
+            ${next}
             </pre>
-            
+
             <details><summary>Preview:</summary>
 
-            ${bodyCurrent}
+            ${current}
 
-            ${bodyNext}
+            ${next}
 
             </details>
             `
 
-            return releaseBody
-
-      - name: Get current date
+      - name: "Get current date"
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
@@ -108,7 +103,7 @@ jobs:
         uses: "actions/github-script@v6"
         env:
           CURRENT_DATE: ${{ steps.date.outputs.date }}
-          RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
+          RELEASE_BODY: ${{steps.milestones_as_markdown.outputs.result}}
         with:
           script: |
             name = `infra-team-sync-${process.env.CURRENT_DATE}`
