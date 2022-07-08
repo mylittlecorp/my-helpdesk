@@ -34,8 +34,8 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
 
-      # - name: "Determine tag"
-      #   run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
+      - name: "Determine tag"
+        run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
       # - name: Generate token
       #   id: generate_token
       #   uses: tibdex/github-app-token@v1
@@ -55,6 +55,7 @@ jobs:
           result-encoding: string
           script: |
             const getMilestoneIssuesAsMarkdown = async function(milestone, milestoneName) {
+            console.log(`milestone: ${milestone}, milestoneName: ${milestoneName}`)
               const opts = github.rest.issues.listForRepo.endpoint.merge({
                 ...context.issue,
                 milestone,
@@ -66,8 +67,10 @@ jobs:
               let openIssues = []
               for (const issue of issues) {
                 if (issue.state == 'closed') {
+                  console.log(`issue ${issue.html_url} closed`)
                   closedIssues.push(issue)
                 } else {
+                  console.log(`issue ${issue.html_url} not closed (${issue.state})`)
                   openIssues.push(issue)
                 }
               }
@@ -95,6 +98,8 @@ jobs:
             return releaseBody
       - name: "Create release"
         uses: "actions/github-script@v6"
+        env:
+          RELEASE_BODY: "${{steps.gather_release_body.outputs.result}}"
         with:
           script: |
             try {
@@ -105,8 +110,8 @@ jobs:
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: context.payload.runNumber,
-                body: "${{steps.gather_release_body.outputs.result}}",
+                tag_name: process.env.RELEASE_TAG,
+                body: process.env.RELEASE_BODY,
               });
             } catch (error) {
               core.setFailed(error.message);
