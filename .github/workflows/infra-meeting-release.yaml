@@ -82,31 +82,19 @@ jobs:
             // Retrieve the markdown content related to the "next" milestone issues
             bodyNext = await getMilestoneAsMarkdown(context.payload.inputs.next_milestone_id, context.payload.inputs.next_milestone_name)
             
-            bodyCurrentAndNext = bodyCurrent.concat("\r\n\r\n").concat(bodyNext)
-
-            // The release body consist of the markdown content gathered above, first as a code block, then as markdown in a <details> block
-            releaseBody = 'Markdown for the infra team sync meeting notes preparation:'.concat("\r\n\r\n")
-              .concat('<pre>')
-              .concat("\r\n")
-              .concat(bodyCurrentAndNext)
-              .concat("\r\n")
-              .concat('</pre>')
-              .concat("\r\n\r\n")
-              .concat('<details><summary>Preview:</summary>')
-              .concat("\r\n\r\n")
-              .concat(bodyCurrentAndNext)
-              .concat("\r\n\r\n")
-              .concat('</detail>')
-
             releaseBody = 
               `Markdown for the infra team sync meeting notes preparation:
               <pre>
-              ${bodyCurrentAndNext}
+              ${bodyCurrent}
+
+              ${bodyNext}
               </pre>
               
               <details><summary>Preview:</summary>
 
-              ${bodyCurrentAndNext}
+              ${bodyCurrent}
+
+              ${bodyNext}
 
               </detail>`
 
