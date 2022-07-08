@@ -124,7 +124,7 @@ jobs:
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             })
-            console.log(tagName)
+            console.log(`tagName:${tagName}``)
             return tagName
       - name: "Create release"
         uses: "actions/github-script@v6"
@@ -133,10 +133,11 @@ jobs:
           RELEASE_BODY: ${{steps.gather_release_body.outputs.result}}
         with:
           script: |
+            console.log(`process.env.RELEASE_TAG:${process.env.RELEASE_TAG}``)
             try {
               await github.rest.repos.createRelease({
                 draft: true,
-                generate_release_notes: true,
+                generate_release_notes: false,
                 name: process.env.RELEASE_TAG,
                 owner: context.repo.owner,
                 prerelease: false,
