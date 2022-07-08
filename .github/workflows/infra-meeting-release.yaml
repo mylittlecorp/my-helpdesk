@@ -46,9 +46,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: console.log(context)
-      - name: "Create release"
+      - name: "Gather release body"
         uses: "actions/github-script@v6"
         with:
+          result-encoding: string
           script: |
             function getMilestoneIssuesAsMarkdown(milestone, milestoneName) {
               const opts = github.rest.issues.listForRepo.endpoint.merge({
@@ -92,7 +93,11 @@ jobs:
 
             console.log('releaseBody:')
             console.log(releaseBody)
-
+            return releaseBody
+      - name: "Create release"
+        uses: "actions/github-script@v6"
+        with:
+          script: |
             try {
               await github.rest.repos.createRelease({
                 draft: true,
