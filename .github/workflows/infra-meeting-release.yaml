@@ -77,9 +77,27 @@ jobs:
           script: |
             console.log('start')
             console.log('milestone_id:' + context.payload.inputs.milestone_id)
-            console.log('next')
 
-            console.log(JSON.stringify(context.issue))
+            const milestone = context.payload.inputs.milestone_id
+            const opts = github.rest.issues.listForRepo.endpoint.merge({
+              ...context.issue,
+              milestone,
+              state: 'all'
+            })
+            const issues = await github.paginate(opts)
+
+            for (const issue of issues) {
+              console.log('-----')
+              console.log(issue)
+              if (issue.number === context.issue.number) {
+                continue
+              }
+
+              if (issue.pull_request) {
+                return // Creator is already a contributor.
+              }
+            }
+
             /*
             try {
               await github.rest.repos.createRelease({
