@@ -107,14 +107,11 @@ jobs:
               sha: context.sha
             })
             return tagName
-      - name: "Determine tag"
-        env:
-          NEW_TAG_REF: ${{ steps.create_tag.outputs.result }}
-        run: "echo \"RELEASE_TAG=${NEW_TAG_REF#refs/tags/}\" >> $GITHUB_ENV"
       - name: "Create release"
         uses: "actions/github-script@v6"
         env:
-          RELEASE_BODY: "${{steps.gather_release_body.outputs.result}}"
+          RELEASE_TAG: ${{steps.gather_release_body.outputs.result}}
+          RELEASE_BODY: ${{steps.create_tag.outputs.result}}
         with:
           script: |
             try {
