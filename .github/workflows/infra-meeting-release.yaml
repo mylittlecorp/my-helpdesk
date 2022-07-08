@@ -134,15 +134,17 @@ jobs:
         with:
           script: |
             console.log(`process.env.RELEASE_TAG:${process.env.RELEASE_TAG}`)
+            releaseTag = process.env.RELEASE_TAG.slice(1, -1);
+            console.log(`releaseTag:${releaseTag}`)
             try {
               await github.rest.repos.createRelease({
                 draft: true,
                 generate_release_notes: false,
-                name: process.env.RELEASE_TAG,
+                name: releaseTag,
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: process.env.RELEASE_TAG,
+                tag_name: releaseTag,
                 body: process.env.RELEASE_BODY,
               });
             } catch (error) {
