@@ -86,10 +86,10 @@ jobs:
             })
             const issues = await github.paginate(opts)
 
-            milestoneIssues = null
+            let milestoneIssues = []
             for (const issue of issues) {
               console.log('-----')
-              console.log(issue)
+              console.log(issue.id)
               milestoneIssues[issue.state] = issue
               /*
               if (issue.number === context.issue.number) {
