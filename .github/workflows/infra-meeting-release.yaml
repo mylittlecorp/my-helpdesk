@@ -131,7 +131,7 @@ jobs:
             // Create the (draft) release with the content retrieved in earlier step
             try {
               await github.rest.repos.createRelease({
-                draft: true,
+                draft: false,
                 generate_release_notes: false,
                 name: releaseTag,
                 owner: context.repo.owner,
